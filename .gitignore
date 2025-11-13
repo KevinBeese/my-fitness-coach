@@ -1,0 +1,12 @@
+# Flutter/Dart
+.dart_tool/
+.packages
+build/
+.dart_tool/**
+# VS Code
+.vscode/
+# Env
+.env
+.env*
+# Flutter web artifacts
+web/flare/
