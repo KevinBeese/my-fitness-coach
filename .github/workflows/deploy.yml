@@ -1,0 +1,57 @@
+name: Deploy Flutter Web to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Enable web & fetch deps
+        run: |
+          flutter config --enable-web
+          flutter pub get
+
+      # Korrektes base-href:
+      # - Wenn Repo == <user>.github.io → '/'
+      # - Sonst → '/<repo-name>/'
+      - name: Compute BASE_HREF
+        id: basehref
+        run: |
+          REPO="${GITHUB_REPOSITORY##*/}"
+          OWNER="${GITHUB_REPOSITORY%%/*}"
+          if [[ "$REPO" == "$OWNER.github.io" ]]; then
+            echo "BASE_HREF=/" >> $GITHUB_OUTPUT
+          else
+            echo "BASE_HREF=/$REPO/" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build (release, prod defines)
+        run: |
+          flutter build web --release \
+            --base-href="${{ steps.basehref.outputs.BASE_HREF }}" \
+            --dart-define=FLAVOR=prod \
+            --dart-define=SUPABASE_URL="${SUPABASE_URL}" \
+            --dart-define=SUPABASE_ANON_KEY="${SUPABASE_ANON_KEY}"
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
