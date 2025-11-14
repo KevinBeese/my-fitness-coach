@@ -1,0 +1,52 @@
+{
+  "app_title": "Mein Fitness Coach",
+  "home": {
+    "welcome": "Willkommen, {name}!",
+    "start_training": "Training starten"
+    },
+  "profile": {
+    "title": "Profil",
+    "create": "Profil anlegen",
+    "first_name": "Vorname",
+    "last_name": "Nachname",
+    "birth_date_choose": "Geburtsdatum wählen",
+    "birth_date_select": "Geburtsdatum auswählen",
+    "birth_date_label": "Geburtsdatum: {date}",
+    "date_choose": "Datum wählen",
+    "height": "Größe (cm)",
+    "weight": "Gewicht (kg)",
+    "goal": "Ziel",
+    "personal_goal": "Persönliches Ziel",
+    "save": "Speichern",
+    "saving": "Speichert…",
+    "saved": "Profil gespeichert."
+  },
+  "auth": {
+    "create_account": "Konto erstellen",
+    "sign_in": "Anmelden",
+    "email": "E‑Mail",
+    "password": "Passwort",
+    "register": "Registrieren",
+    "login": "Login",
+    "already_account": "Schon ein Konto? Anmelden",
+    "no_account": "Noch kein Konto? Registrieren",
+    "login_title": "Login zum Konto",
+    "login_button": "Einloggen",
+    "register_button": "Konto erstellen",
+    "check_email":{
+      "title": "E‑Mail bestätigen",
+      "message": "Wir haben eine Bestätigungs-E‑Mail an {email} gesendet. Bitte überprüfe deinen Posteingang und klicke auf den Bestätigungslink, um dein Konto zu aktivieren.\n Wir prüfen im Hintergrund, ob deine E‑Mail bestätigt wurde und leiten dich dann weiter.",
+      "button": "E‑Mail bestätigt? Weiter zum Login"
+    },
+    "back_to_login": "Zurück zum Login"
+    
+  },
+  "dashboard": {
+    "home": "Home 🏋️ (später Dashboard)"
+  },
+  "validation": {
+    "required": "Dieses Feld ist erforderlich.",
+    "number_invalid": "Ungültige Zahl.",
+    "birthdate_required": "Geburtsdatum ist erforderlich."
+  }
+}

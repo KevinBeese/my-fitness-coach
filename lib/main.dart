@@ -1,18 +1,35 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'scr/app.dart';
+import 'scr/presentation/app/application.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: '.env');
+  await EasyLocalization.ensureInitialized();
+
+  const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+  const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+  const flavor = String.fromEnvironment('FLAVOR', defaultValue: 'dev');
+
+  debugPrint('🚀 Starting my-fitness-coach [$flavor]');
+  debugPrint('Supabase URL: $supabaseUrl');
 
   await Supabase.initialize(
-    url: dotenv.env['SUPABASE_URL']!,
-    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+    url: supabaseUrl,
+    anonKey: supabaseAnonKey,
     authOptions: const FlutterAuthClientOptions(authFlowType: AuthFlowType.pkce, autoRefreshToken: true),
   );
 
-  runApp(const MyApp());
+  runApp(
+    ProviderScope(
+      child: EasyLocalization(
+        supportedLocales: const [Locale('de'), Locale('en')],
+        path: 'assets/translations',
+        fallbackLocale: const Locale('de'),
+        child: const Application(),
+      ),
+    ),
+  );
 }
