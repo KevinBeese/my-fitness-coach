@@ -45,7 +45,7 @@ jobs:
       - name: Build (release, prod defines)
         run: |
           flutter build web --release \
-            --base-href="${{ steps.basehref.outputs.BASE_HREF }}" \
+            --base-href="/my-fitness-coach/" \
             --dart-define=FLAVOR=prod \
             --dart-define=SUPABASE_URL="${SUPABASE_URL}" \
             --dart-define=SUPABASE_ANON_KEY="${SUPABASE_ANON_KEY}"
