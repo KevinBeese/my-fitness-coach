@@ -1,0 +1,54 @@
+{
+  "app_title": "My Fitness Coach",
+  "home": {
+    "welcome": "Welcome, {name}!",
+    "start_training": "Start training"
+  }
+    ,
+    "profile": {
+      "title": "Profile",
+      "create": "Create profile",
+      "first_name": "First name",
+      "last_name": "Last name",
+      "birth_date_choose": "Select birth date",
+      "birth_date_select": "Choose birth date",
+      "birth_date_label": "Birth date: {date}",
+      "date_choose": "Choose date",
+      "height": "Height (cm)",
+      "weight": "Weight (kg)",
+      "goal": "Goal",
+      "personal_goal": "Personal goal",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Profile saved."
+    },
+    "auth": {
+      "create_account": "Create account",
+      "sign_in": "Sign in",
+      "email": "Email",
+      "password": "Password",
+      "register": "Register",
+      "login": "Login",
+      "already_account": "Already have an account? Sign in",
+      "no_account": "No account yet? Register",
+      "login_title": "Login to your account",
+      "login_button": "Log in",
+      "register_button": "Create an account",
+      "check_email":{
+        "title": "Verify Email",
+        "message": "We have sent a verification email to {email}. Please check your inbox and click the verification link to activate your account.",
+        "button": "Email verified? Proceed to Login"
+      },
+      "back_to_login": "Back to Login"
+
+    },
+    "dashboard": {
+      "home": "Home 🏋️ (dashboard later)"
+    },
+    "validation": {
+      "required": "This field is required.",
+      "number_invalid": "Number is invalid.",
+      "birthdate_required": "Birthdate is required."
+    }
+
+}
