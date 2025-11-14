@@ -9,31 +9,25 @@ import '../../../../generated/locale_keys.g.dart';
 import '../../state/auth/auth_notifier.dart';
 import '../../state/auth/auth_state.dart';
 
-class LoginScreen extends HookConsumerWidget {
-  const LoginScreen({super.key});
+class AuthScreen extends HookConsumerWidget {
+  const AuthScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final emailCtrl = useTextEditingController();
-    final passwordCtrl = useTextEditingController();
+    final emailCtrl = useTextEditingController(text: Constants.defaultAppUser);
+    final passwordCtrl = useTextEditingController(text: Constants.defaultAppUserPassword);
     final state = ref.watch(authNotifierProvider);
     final notifier = ref.read(authNotifierProvider.notifier);
 
     Future<void> onLogin() async {
-      await notifier.signIn(
-        emailCtrl.text.trim().isEmpty ? Constants.defaultAppUser : emailCtrl.text.trim(),
-        passwordCtrl.text.trim().isEmpty ? Constants.defaultAppUserPassword : passwordCtrl.text.trim(),
-      );
+      await notifier.signIn(emailCtrl.text.trim(), passwordCtrl.text.trim());
       if (state.status == AuthStatus.error && state.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
       }
     }
 
     Future<void> onSignUp() async {
-      await notifier.signUp(
-        emailCtrl.text.trim().isEmpty ? Constants.defaultAppUser : emailCtrl.text.trim(),
-        passwordCtrl.text.trim().isEmpty ? Constants.defaultAppUserPassword : passwordCtrl.text.trim(),
-      );
+      await notifier.signUp(emailCtrl.text.trim(), passwordCtrl.text.trim());
       if (state.status == AuthStatus.error && state.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
       }
@@ -57,10 +51,10 @@ class LoginScreen extends HookConsumerWidget {
               decoration: InputDecoration(labelText: LocaleKeys.auth_password.tr()),
               obscureText: true,
             ),
-            const SizedBox(height: 16),
+            verticalMargin16,
             if (state.status == AuthStatus.error && state.errorMessage != null) ...[
               Text(state.errorMessage!, style: const TextStyle(color: Colors.red)),
-              const SizedBox(height: 8),
+              verticalMargin8,
             ],
             Row(
               children: [
@@ -70,7 +64,7 @@ class LoginScreen extends HookConsumerWidget {
                     child: isLoading ? const CircularProgressIndicator() : Text(LocaleKeys.auth_login_button.tr()),
                   ),
                 ),
-                const SizedBox(width: 16),
+                horizontalMargin16,
                 Expanded(
                   child: OutlinedButton(
                     onPressed: isLoading ? null : onSignUp,

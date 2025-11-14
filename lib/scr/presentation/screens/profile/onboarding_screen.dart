@@ -4,7 +4,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../../generated/locale_keys.g.dart';
 import '../../../domain/profile/profile_entity.dart';
-import '../../app/routes/app_routes.dart';
 import '../../state/auth/auth_notifier.dart';
 import '../../state/profile/profile_onboarding_notifier.dart';
 import '../../state/profile/profile_onboarding_state.dart';
@@ -112,7 +111,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(LocaleKeys.profile_saved.tr())));
 
     // Nach erfolgreichem Onboarding → Home
-    Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+    Navigator.of(context).pop();
   }
 
   @override

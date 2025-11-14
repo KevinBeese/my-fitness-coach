@@ -21,4 +21,14 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<Profile> upsertProfile(Profile profile) async {
     return _api.upsertProfile(profile);
   }
+
+  @override
+  Future<void> deleteProfile(String userId) async {
+    await _api.deleteProfile(userId);
+  }
+
+  @override
+  Future<Profile> updateProfile(Profile profile) async {
+    return _api.updateProfile(profile);
+  }
 }

@@ -12,16 +12,14 @@ class ProfileGate extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(profileOnboardingNotifierProvider);
-    final notifier = ref.read(profileOnboardingNotifierProvider.notifier);
 
     // beim ersten Mal Profil laden
     if (state.status == ProfileOnboardingStatus.initial) {
-      notifier.loadProfile();
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (state.status == ProfileOnboardingStatus.loading && state.profile == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: Center(child: CircularProgressIndicator())); // TODO
     }
 
     final profile = state.profile;

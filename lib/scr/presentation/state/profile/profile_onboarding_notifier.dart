@@ -61,4 +61,17 @@ class ProfileOnboardingNotifier extends StateNotifier<ProfileOnboardingState> {
       return false;
     }
   }
+
+  Future<bool> updateProfile(Profile profile) async {
+    state = state.copyWith(status: ProfileOnboardingStatus.saving);
+
+    try {
+      final saved = await _repo.updateProfile(profile);
+      state = state.copyWith(status: ProfileOnboardingStatus.loaded, profile: saved);
+      return true;
+    } catch (e) {
+      state = state.copyWith(status: ProfileOnboardingStatus.error, errorMessage: e.toString());
+      return false;
+    }
+  }
 }
