@@ -10,3 +10,6 @@ build/
 .env*
 # Flutter web artifacts
 web/flare/
+
+# FVM Version Cache
+.fvm/

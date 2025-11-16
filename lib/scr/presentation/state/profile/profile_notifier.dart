@@ -1,33 +1,43 @@
+// lib/scr/presentation/state/profile/profile_notifier.dart
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hooks_riverpod/legacy.dart';
 import 'package:my_fitness_coach/scr/domain/profile/profile_entity.dart';
+import 'package:my_fitness_coach/scr/domain/profile/profile_repository.dart';
 
-import '../../../domain/profile/profile_repository.dart';
-import 'profile_state.dart';
+class ProfileNotifier extends StateNotifier<AsyncValue<Profile?>> {
+  final ProfileRepository _repo;
+  final String? _userId;
 
-class ProfileNotifier extends StateNotifier<ProfileState> {
-  final ProfileRepository _repository;
-
-  ProfileNotifier(this._repository) : super(const ProfileState());
-
-  Future<void> loadProfile({required String userId}) async {
-    state = state.copyWith(status: ProfileStatus.loading, errorMessage: null);
-
-    try {
-      final profile = await _repository.getCurrentProfile(userId);
-      state = state.copyWith(status: ProfileStatus.loaded, profile: profile);
-    } catch (e) {
-      state = state.copyWith(status: ProfileStatus.error, errorMessage: e.toString());
+  ProfileNotifier(this._repo, {String? userId}) : _userId = userId, super(const AsyncValue.loading()) {
+    if (_userId != null) {
+      loadProfile();
+    } else {
+      state = const AsyncValue.data(null);
     }
   }
 
-  Future<void> saveProfile({required Profile profile}) async {
-    state = state.copyWith(status: ProfileStatus.saving, errorMessage: null);
+  Future<void> loadProfile() async {
+    if (_userId == null) {
+      state = const AsyncValue.data(null);
+      return;
+    }
 
+    state = const AsyncValue.loading();
     try {
-      final saved = await _repository.upsertProfile(profile);
-      state = state.copyWith(status: ProfileStatus.loaded, profile: saved);
-    } catch (e) {
-      state = state.copyWith(status: ProfileStatus.error, errorMessage: e.toString());
+      final profile = await _repo.fetchProfile(_userId);
+      state = AsyncValue.data(profile);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  Future<void> saveProfile(Profile profile) async {
+    state = const AsyncValue.loading();
+    try {
+      final updated = await _repo.upsertProfile(profile);
+      state = AsyncValue.data(updated);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
     }
   }
 }

@@ -11,7 +11,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
   ProfileRepositoryImpl(this._api, this._client);
 
   @override
-  Future<Profile?> getCurrentProfile(String userId) async {
+  Future<Profile?> fetchProfile(String userId) async {
     final user = _client.auth.currentUser;
     if (user == null) return null;
     return _api.fetchProfileForUser(user.id);

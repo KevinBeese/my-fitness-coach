@@ -27,17 +27,24 @@
       "sign_in": "Sign in",
       "email": "Email",
       "password": "Password",
-      "register": "Register",
-      "login": "Login",
+      "login": {
+        "title": "Login to your account",
+        "button": "Log in",
+        "error": "Login failed. No session received"
+      },
+      "register": {
+        "title": "Register",
+        "button": "Create an account",
+        "error": "Registration failed. No user received"
+      },
       "already_account": "Already have an account? Sign in",
       "no_account": "No account yet? Register",
       "login_title": "Login to your account",
       "login_button": "Log in",
-      "register_button": "Create an account",
       "check_email":{
         "title": "Verify Email",
-        "message": "We have sent a verification email to {email}. Please check your inbox and click the verification link to activate your account.",
-        "button": "Email verified? Proceed to Login"
+        "message": "We have sent a verification email to {email}. Please check your inbox and click the verification link to activate your account.\n\n Please also check your spam folder if you don't find the email in your inbox. \n\n Only then can you log in.",
+        "button": "Email verified? Proceed to Login {timer}"
       },
       "back_to_login": "Back to Login"
 
