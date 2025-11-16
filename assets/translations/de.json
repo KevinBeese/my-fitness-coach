@@ -26,17 +26,22 @@
     "sign_in": "Anmelden",
     "email": "E‑Mail",
     "password": "Passwort",
-    "register": "Registrieren",
-    "login": "Login",
+    "login": {
+      "title": "Login zum Konto",
+      "button": "Einloggen",
+      "error": "Login fehlgeschlagen. Keine Session erhalten"
+    },
     "already_account": "Schon ein Konto? Anmelden",
     "no_account": "Noch kein Konto? Registrieren",
-    "login_title": "Login zum Konto",
-    "login_button": "Einloggen",
-    "register_button": "Konto erstellen",
+    "register": {
+      "title": "Konto erstellen",
+      "button": "Registrieren",
+      "error": "Registrierung fehlgeschlagen. Kein User erhalten"
+    },
     "check_email":{
       "title": "E‑Mail bestätigen",
-      "message": "Wir haben eine Bestätigungs-E‑Mail an {email} gesendet. Bitte überprüfe deinen Posteingang und klicke auf den Bestätigungslink, um dein Konto zu aktivieren.\n Wir prüfen im Hintergrund, ob deine E‑Mail bestätigt wurde und leiten dich dann weiter.",
-      "button": "E‑Mail bestätigt? Weiter zum Login"
+      "message": "Wir haben eine Bestätigungs-E‑Mail an {email} gesendet. Bitte überprüfe deinen Posteingang und klicke auf den Bestätigungslink, um dein Konto zu aktivieren.\n\n Bitte überprüfe auch deinen Spam-Ordner, falls du die E‑Mail nicht in deinem Posteingang findest. \n\n Erst danach kannst du dich einloggen.",
+      "button": "E‑Mail bestätigt? Weiter zum Login {timer}"
     },
     "back_to_login": "Zurück zum Login"
     
