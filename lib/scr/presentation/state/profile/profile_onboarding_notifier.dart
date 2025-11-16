@@ -36,13 +36,15 @@ class ProfileOnboardingNotifier extends StateNotifier<ProfileOnboardingState> {
 
   Future<void> loadProfile() async {
     state = state.copyWith(status: ProfileOnboardingStatus.loading);
+
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) {
       state = state.copyWith(status: ProfileOnboardingStatus.error, errorMessage: 'No authenticated user found.');
       return;
     }
+
     try {
-      final p = await _repo.getCurrentProfile(user.id);
+      final p = await _repo.fetchProfile(user.id);
       state = state.copyWith(status: ProfileOnboardingStatus.loaded, profile: p);
     } catch (e) {
       state = state.copyWith(status: ProfileOnboardingStatus.error, errorMessage: e.toString());
@@ -54,19 +56,6 @@ class ProfileOnboardingNotifier extends StateNotifier<ProfileOnboardingState> {
 
     try {
       final saved = await _repo.upsertProfile(profile);
-      state = state.copyWith(status: ProfileOnboardingStatus.loaded, profile: saved);
-      return true;
-    } catch (e) {
-      state = state.copyWith(status: ProfileOnboardingStatus.error, errorMessage: e.toString());
-      return false;
-    }
-  }
-
-  Future<bool> updateProfile(Profile profile) async {
-    state = state.copyWith(status: ProfileOnboardingStatus.saving);
-
-    try {
-      final saved = await _repo.updateProfile(profile);
       state = state.copyWith(status: ProfileOnboardingStatus.loaded, profile: saved);
       return true;
     } catch (e) {

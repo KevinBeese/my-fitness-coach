@@ -1,81 +1,91 @@
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+// lib/scr/presentation/state/auth/auth_notifier.dart
 import 'package:hooks_riverpod/legacy.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 
-import '../../../data/auth/auth_api.dart';
-import '../../../data/auth/auth_repository_impl.dart';
-import '../../../domain/auth/auth_repository.dart';
-import '../../../domain/auth/user_entity.dart';
+import '../../../domain/auth/i_auth_repository.dart';
 import 'auth_state.dart';
 
-// Repository-Provider
-final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  final client = Supabase.instance.client;
-  final api = AuthApi(client);
-  return AuthRepositoryImpl(api);
-});
-
-// StateNotifierProvider
-final authNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  final repo = ref.watch(authRepositoryProvider);
-  final notifier = AuthNotifier(repo);
-
-  // auth state stream abonnieren
-  repo.authStateChanges().listen((user) {
-    notifier._onAuthChanged(user);
-  });
-
-  // Beim Start einmal den aktuellen User prüfen
-  notifier.checkAuthOnStart();
-
-  return notifier;
-});
-
 class AuthNotifier extends StateNotifier<AuthState> {
-  final AuthRepository _repository;
+  final IAuthRepository _repo;
 
-  AuthNotifier(this._repository) : super(const AuthState());
+  AuthNotifier(this._repo)
+    : super(_repo.currentSession != null ? AuthState.authenticated(_repo.currentSession!) : AuthState.unknown()) {
+    // Optional: auf Auth-Änderungen hören
+    _repo.authChanges().listen(_onAuthChanged);
+  }
 
-  Future<void> checkAuthOnStart() async {
-    state = state.copyWith(status: AuthStatus.loading);
-    final user = await _repository.getCurrentUser();
-    if (user != null) {
-      state = state.copyWith(status: AuthStatus.authenticated, user: user);
+  void _onAuthChanged(Session? session) {
+    if (session == null) {
+      state = AuthState.unknown();
+    } else if (session.user.emailConfirmedAt == null) {
+      state = state.copyWith(status: AuthStatus.unauthenticated);
     } else {
-      state = state.copyWith(status: AuthStatus.unauthenticated, user: null);
+      state = AuthState.authenticated(session);
     }
   }
 
   Future<void> signIn(String email, String password) async {
-    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+    state = state.copyWith(status: AuthStatus.loading, isLoading: true, errorMessage: null);
+
     try {
-      final user = await _repository.signInWithEmailPassword(email: email, password: password);
-      state = state.copyWith(status: AuthStatus.authenticated, user: user);
+      final session = await _repo.signIn(email: email, password: password);
+      if (session.user.emailConfirmedAt == null) {
+        state = state.copyWith(status: AuthStatus.unauthenticated, isLoading: false);
+        return;
+      } else {
+        state = AuthState.authenticated(session);
+      }
+    } on AuthException catch (e) {
+      state = state.copyWith(status: AuthStatus.error, isLoading: false, errorMessage: e.message);
     } catch (e) {
-      state = state.copyWith(status: AuthStatus.error, errorMessage: e.toString(), user: null);
+      state = state.copyWith(status: AuthStatus.error, isLoading: false, errorMessage: e.toString());
     }
   }
 
   Future<void> signUp(String email, String password) async {
-    state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
+    state = state.copyWith(
+      status: AuthStatus.loading,
+      isLoading: true,
+      errorMessage: null,
+      email: email,
+      password: password,
+    );
+
     try {
-      final user = await _repository.signUpWithEmailPassword(email: email, password: password);
-      state = state.copyWith(status: AuthStatus.authenticated, user: user);
+      final result = await _repo.signUp(email: email, password: password);
+
+      if (result.emailConfirmedAt == null) {
+        // Viele Flows: Nach Registrierung bleibt man unauthenticated
+        // bis E-Mail bestätigt ist → hier z. B.:
+        state = state.copyWith(status: AuthStatus.unauthenticated, isLoading: false);
+      } else {
+        await signIn(email, password);
+      }
+    } on AuthException catch (e) {
+      state = state.copyWith(status: AuthStatus.error, isLoading: false, errorMessage: e.message);
     } catch (e) {
-      state = state.copyWith(status: AuthStatus.error, errorMessage: e.toString(), user: null);
+      state = state.copyWith(status: AuthStatus.error, isLoading: false, errorMessage: e.toString());
+    }
+  }
+
+  Future<void> verificationAccepted() async {
+    state = state.copyWith(status: AuthStatus.loading, isLoading: true, errorMessage: null);
+
+    try {
+      await signIn(state.user!.email!, state.password!);
+    } catch (e) {
+      state = state.copyWith(status: AuthStatus.error, isLoading: false, errorMessage: e.toString());
     }
   }
 
   Future<void> signOut() async {
-    await _repository.signOut();
-    state = state.copyWith(status: AuthStatus.unauthenticated, user: null);
-  }
+    state = state.copyWith(status: AuthStatus.loading, isLoading: true, errorMessage: null);
 
-  void _onAuthChanged(AppUser? user) {
-    if (user == null) {
-      state = state.copyWith(status: AuthStatus.unauthenticated, user: null);
-    } else {
-      state = state.copyWith(status: AuthStatus.authenticated, user: user);
+    try {
+      await _repo.signOut();
+      state = state.copyWith(status: AuthStatus.unknown, isLoading: false);
+    } catch (e) {
+      state = state.copyWith(status: AuthStatus.error, isLoading: false, errorMessage: e.toString());
     }
   }
 }

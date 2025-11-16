@@ -48,34 +48,4 @@ class ProfileApi {
       goal: (res['goal'] ?? '') as String,
     );
   }
-
-  Future<void> deleteProfile(String userId) async {
-    await client.from('profiles').delete().eq('id', userId);
-  }
-
-  Future<Profile> updateProfile(Profile profile) async {
-    final res = await client
-        .from('profiles')
-        .update({
-          'first_name': profile.firstName,
-          'last_name': profile.lastName,
-          'birth_date': profile.birthDate?.toIso8601String(),
-          'height_cm': profile.heightCm,
-          'weight_kg': profile.weightKg,
-          'goal': profile.goal,
-        })
-        .eq('id', profile.id)
-        .select()
-        .single();
-
-    return Profile(
-      id: res['id'] as String,
-      firstName: (res['first_name'] ?? '') as String,
-      lastName: (res['last_name'] ?? '') as String,
-      birthDate: (res['birth_date'] as String?) != null ? DateTime.tryParse(res['birth_date'] as String) : null,
-      heightCm: (res['height_cm'] as num?)?.toDouble(),
-      weightKg: (res['weight_kg'] as num?)?.toDouble(),
-      goal: (res['goal'] ?? '') as String,
-    );
-  }
 }

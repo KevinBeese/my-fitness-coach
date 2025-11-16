@@ -6,8 +6,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:my_fitness_coach/generated/locale_keys.g.dart';
-import 'package:my_fitness_coach/scr/auth/auth_state_notifier.dart';
-import 'package:my_fitness_coach/scr/presentation/app/routes/app_routes.dart';
+import 'package:my_fitness_coach/scr/presentation/state/auth/auth_notifier.dart';
+import 'package:my_fitness_coach/scr/presentation/state/auth/auth_provider.dart';
 import 'package:my_fitness_coach/scr/presentation/theme/style/styles.dart';
 
 class EmailVerificationScreen extends ConsumerStatefulWidget {
@@ -21,44 +21,33 @@ class EmailVerificationScreen extends ConsumerStatefulWidget {
 }
 
 class _EmailVerificationScreenState extends ConsumerState<EmailVerificationScreen> {
-  Timer? _timer;
   bool _checking = false;
+  bool _isVerificationActivated = false;
+  int _timer = 0;
+  late final AuthNotifier _authNotifier;
 
   @override
   void initState() {
     super.initState();
-    // alle 5 Sekunden versuchen wir, den User einzuloggen
-    _timer = Timer.periodic(const Duration(seconds: 5), (_) => _checkVerification());
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
+    _startTimer();
+    _authNotifier = ref.read(authNotifierProvider.notifier);
   }
 
   Future<void> _checkVerification() async {
-    if (!mounted || _checking) return;
+    if (_checking) return;
 
-    _checking = true;
-    final notifier = ref.read(authStateNotifierProvider.notifier);
+    setState(() => _checking = true);
 
-    await notifier.signIn(widget.email, widget.password);
+    await _authNotifier.signIn(widget.email, widget.password);
 
-    final authState = ref.read(authStateNotifierProvider);
-    _checking = false;
+    if (mounted) setState(() => _checking = false);
 
     if (!mounted) return;
-
-    if (authState.session != null) {
-      _timer?.cancel();
-      Navigator.of(context).pushReplacementNamed(AppRoutes.onboarding);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authStateNotifierProvider);
+    final authState = ref.watch(authNotifierProvider);
 
     return Scaffold(
       body: Center(
@@ -77,22 +66,27 @@ class _EmailVerificationScreenState extends ConsumerState<EmailVerificationScree
                     textAlign: TextAlign.center,
                   ),
                   verticalMargin12,
-                  if (authState.isLoading) const CircularProgressIndicator(),
-                  if (authState.error != null)
+
+                  if (authState.isLoading || _checking) const CircularProgressIndicator(),
+
+                  if (authState.errorMessage != null)
                     Padding(
                       padding: bottomPadding8,
-                      child: Text(authState.error!, style: const TextStyle(color: Colors.red)),
+                      child: Text(authState.errorMessage!, style: const TextStyle(color: Colors.red)),
                     ),
+
                   ElevatedButton(
-                    onPressed: authState.isLoading ? null : _checkVerification,
-                    child: Text(LocaleKeys.auth_check_email_button.tr()),
+                    onPressed: (authState.isLoading || _checking || !_isVerificationActivated)
+                        ? null
+                        : _checkVerification,
+                    child: Text(
+                      LocaleKeys.auth_check_email_button.tr(
+                        namedArgs: {'timer': _isVerificationActivated ? '' : '(${10 - _timer})'},
+                      ),
+                    ),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(LocaleKeys.auth_back_to_login.tr()),
-                  ),
+
+                  TextButton(onPressed: () => _authNotifier.signOut(), child: Text(LocaleKeys.auth_back_to_login.tr())),
                 ],
               ),
             ),
@@ -100,5 +94,18 @@ class _EmailVerificationScreenState extends ConsumerState<EmailVerificationScree
         ),
       ),
     );
+  }
+
+  Future<void> _startTimer() async {
+    while (mounted) {
+      await Future.delayed(const Duration(seconds: 1));
+      if (!mounted) return;
+      setState(() {
+        _timer += 1;
+      });
+      if (_timer >= 10 && !_isVerificationActivated) {
+        _isVerificationActivated = true;
+      }
+    }
   }
 }

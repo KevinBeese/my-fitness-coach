@@ -1,21 +1,23 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:my_fitness_coach/scr/presentation/state/auth/auth_provider.dart';
+import 'package:my_fitness_coach/scr/presentation/theme/style/constant_style_values.dart';
+import 'package:my_fitness_coach/scr/presentation/theme/style/styles.dart';
 
 import '../../../../generated/locale_keys.g.dart';
 import '../../../domain/profile/profile_entity.dart';
-import '../../state/auth/auth_notifier.dart';
 import '../../state/profile/profile_onboarding_notifier.dart';
 import '../../state/profile/profile_onboarding_state.dart';
 
-class OnboardingScreen extends ConsumerStatefulWidget {
-  const OnboardingScreen({super.key});
+class ProfileSetupScreen extends ConsumerStatefulWidget {
+  const ProfileSetupScreen({super.key});
 
   @override
-  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<ProfileSetupScreen> createState() => _ProfileSetupScreenState();
 }
 
-class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
+class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final _firstCtrl = TextEditingController();
@@ -153,7 +155,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               decoration: InputDecoration(labelText: LocaleKeys.profile_last_name.tr()),
               validator: _validateNotEmpty,
             ),
-            const SizedBox(height: 12),
+            verticalMargin12,
             Row(
               children: [
                 Expanded(
@@ -182,7 +184,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            verticalMargin12,
             TextFormField(
               controller: _heightCtrl,
               decoration: InputDecoration(labelText: LocaleKeys.profile_height.tr()),
@@ -200,11 +202,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               decoration: InputDecoration(labelText: LocaleKeys.profile_goal.tr()),
               validator: _validateNotEmpty,
             ),
-            const SizedBox(height: 16),
+            verticalMargin16,
             ElevatedButton(
               onPressed: isSaving ? null : _onSave,
               child: isSaving
-                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                  ? const SizedBox(
+                      width: Dimens.TWO_AND_A_HALF,
+                      height: Dimens.TWO_AND_A_HALF,
+                      child: CircularProgressIndicator(strokeWidth: Dimens.QUARTER),
+                    )
                   : Text(LocaleKeys.profile_save.tr()),
             ),
           ],

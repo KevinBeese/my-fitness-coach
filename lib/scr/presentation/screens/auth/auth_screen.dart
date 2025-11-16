@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:my_fitness_coach/scr/core/constants.dart';
+import 'package:my_fitness_coach/scr/presentation/state/auth/auth_provider.dart';
 import 'package:my_fitness_coach/scr/presentation/theme/style/styles.dart';
 
 import '../../../../generated/locale_keys.g.dart';
-import '../../state/auth/auth_notifier.dart';
 import '../../state/auth/auth_state.dart';
 
 class AuthScreen extends HookConsumerWidget {

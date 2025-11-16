@@ -1,15 +1,55 @@
-import '../../../domain/auth/user_entity.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-enum AuthStatus { unknown, authenticated, unauthenticated, loading, error }
+enum AuthStatus { unknown, loading, unauthenticated, authenticated, error }
 
 class AuthState {
   final AuthStatus status;
-  final AppUser? user;
+  final bool isLoading;
+  final User? user;
+  final Session? session;
+  final String? email;
+  final String? password;
   final String? errorMessage;
 
-  const AuthState({this.status = AuthStatus.unknown, this.user, this.errorMessage});
+  const AuthState({
+    required this.status,
+    this.isLoading = false,
+    this.user,
+    this.session,
+    this.email,
+    this.password,
+    this.errorMessage,
+  });
 
-  AuthState copyWith({AuthStatus? status, AppUser? user, String? errorMessage}) {
-    return AuthState(status: status ?? this.status, user: user ?? this.user, errorMessage: errorMessage);
+  factory AuthState.unknown() => const AuthState(status: AuthStatus.unknown, isLoading: false);
+
+  factory AuthState.loading() => const AuthState(status: AuthStatus.loading, isLoading: true);
+
+  factory AuthState.unauthenticated() => const AuthState(status: AuthStatus.unauthenticated, isLoading: false);
+
+  factory AuthState.authenticated(Session session) =>
+      AuthState(status: AuthStatus.authenticated, user: session.user, session: session, isLoading: false);
+
+  factory AuthState.error(String errorMessage) =>
+      AuthState(status: AuthStatus.error, errorMessage: errorMessage, isLoading: false);
+
+  AuthState copyWith({
+    AuthStatus? status,
+    bool? isLoading,
+    User? user,
+    Session? session,
+    String? email,
+    String? password,
+    String? errorMessage,
+  }) {
+    return AuthState(
+      status: status ?? this.status,
+      isLoading: isLoading ?? this.isLoading,
+      user: user ?? this.user,
+      session: session ?? this.session,
+      email: email ?? this.email,
+      password: password ?? this.password,
+      errorMessage: errorMessage ?? this.errorMessage,
+    );
   }
 }
