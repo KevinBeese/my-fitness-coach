@@ -1,30 +1,20 @@
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hooks_riverpod/legacy.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../data/profile/profile_api.dart';
-import '../../../data/profile/profile_repository_impl.dart';
 import '../../../domain/profile/profile_entity.dart';
-import '../../../domain/profile/profile_repository.dart';
 import 'profile_onboarding_state.dart';
-
-/// Provider für das Repository
-final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
-  final client = Supabase.instance.client;
-  final api = ProfileApi(client);
-  return ProfileRepositoryImpl(api, client);
-});
 
 /// StateNotifierProvider für den Onboarding-State
 final profileOnboardingNotifierProvider = StateNotifierProvider<ProfileOnboardingNotifier, ProfileOnboardingState>((
   ref,
 ) {
-  final repo = ref.watch(profileRepositoryProvider);
+  final repo = ref.watch(profileApiProvider);
   return ProfileOnboardingNotifier(repo);
 });
 
 class ProfileOnboardingNotifier extends StateNotifier<ProfileOnboardingState> {
-  final ProfileRepository _repo;
+  final ProfileApi _repo;
 
   ProfileOnboardingNotifier(this._repo) : super(const ProfileOnboardingState()) {
     _init();
@@ -44,7 +34,7 @@ class ProfileOnboardingNotifier extends StateNotifier<ProfileOnboardingState> {
     }
 
     try {
-      final p = await _repo.fetchProfile(user.id);
+      final p = await _repo.fetchProfileForUser();
       state = state.copyWith(status: ProfileOnboardingStatus.loaded, profile: p);
     } catch (e) {
       state = state.copyWith(status: ProfileOnboardingStatus.error, errorMessage: e.toString());

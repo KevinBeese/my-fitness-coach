@@ -53,5 +53,16 @@
     "required": "Dieses Feld ist erforderlich.",
     "number_invalid": "Ungültige Zahl.",
     "birthdate_required": "Geburtsdatum ist erforderlich."
+  },
+  "training_days":{
+    "title": "Trainingstage pro Woche auswählen",
+    "monday": "Montag",
+    "tuesday": "Dienstag",
+    "wednesday": "Mittwoch",
+    "thursday": "Donnerstag",
+    "friday": "Freitag",
+    "saturday": "Samstag",
+    "sunday": "Sonntag",
+    "button_save": "Speichern"
   }
 }

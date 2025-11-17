@@ -65,6 +65,17 @@ class CodegenLoader extends AssetLoader {
       "number_invalid": "Ungültige Zahl.",
       "birthdate_required": "Geburtsdatum ist erforderlich.",
     },
+    "training_days": {
+      "title": "Trainingstage pro Woche auswählen",
+      "monday": "Montag",
+      "tuesday": "Dienstag",
+      "wednesday": "Mittwoch",
+      "thursday": "Donnerstag",
+      "friday": "Freitag",
+      "saturday": "Samstag",
+      "sunday": "Sonntag",
+      "button_save": "Speichern",
+    },
   };
   static const Map<String, dynamic> _en = {
     "app_title": "My Fitness Coach",
@@ -114,6 +125,17 @@ class CodegenLoader extends AssetLoader {
       "required": "This field is required.",
       "number_invalid": "Number is invalid.",
       "birthdate_required": "Birthdate is required.",
+    },
+    "training_days": {
+      "title": "Select training days per week",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday",
+      "button_save": "Save",
     },
   };
   static const Map<String, Map<String, dynamic>> mapLocales = {"de": _de, "en": _en};

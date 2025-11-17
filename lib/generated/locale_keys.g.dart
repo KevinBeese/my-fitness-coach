@@ -49,4 +49,14 @@ abstract class LocaleKeys {
   static const validation_number_invalid = 'validation.number_invalid';
   static const validation_birthdate_required = 'validation.birthdate_required';
   static const validation = 'validation';
+  static const training_days_title = 'training_days.title';
+  static const training_days_monday = 'training_days.monday';
+  static const training_days_tuesday = 'training_days.tuesday';
+  static const training_days_wednesday = 'training_days.wednesday';
+  static const training_days_thursday = 'training_days.thursday';
+  static const training_days_friday = 'training_days.friday';
+  static const training_days_saturday = 'training_days.saturday';
+  static const training_days_sunday = 'training_days.sunday';
+  static const training_days_button_save = 'training_days.button_save';
+  static const training_days = 'training_days';
 }

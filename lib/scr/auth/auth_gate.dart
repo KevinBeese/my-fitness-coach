@@ -16,10 +16,7 @@ class AuthGate extends ConsumerWidget {
     final authState = ref.watch(authNotifierProvider.select((state) => state));
     switch (authNotifier.status) {
       case AuthStatus.unauthenticated:
-        return EmailVerificationScreen(
-          email: authState.email ?? '',
-          password: authState.password ?? '',
-        );
+        return EmailVerificationScreen(email: authState.email ?? '', password: authState.password ?? '');
       case AuthStatus.error:
       case AuthStatus.authenticated:
         return const ProfileGate();

@@ -10,14 +10,14 @@ import '../../../domain/profile/profile_entity.dart';
 import '../../state/profile/profile_onboarding_notifier.dart';
 import '../../state/profile/profile_onboarding_state.dart';
 
-class ProfileSetupScreen extends ConsumerStatefulWidget {
-  const ProfileSetupScreen({super.key});
+class ProfileOnboardingScreen extends ConsumerStatefulWidget {
+  const ProfileOnboardingScreen({super.key});
 
   @override
-  ConsumerState<ProfileSetupScreen> createState() => _ProfileSetupScreenState();
+  ConsumerState<ProfileOnboardingScreen> createState() => _ProfileOnboardingScreenState();
 }
 
-class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
+class _ProfileOnboardingScreenState extends ConsumerState<ProfileOnboardingScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final _firstCtrl = TextEditingController();
@@ -89,7 +89,17 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
     final baseProfile =
         existing ??
-        Profile(id: user.id, firstName: '', lastName: '', birthDate: null, heightCm: null, weightKg: null, goal: '');
+        Profile(
+          id: user.id,
+          firstName: '',
+          lastName: '',
+          birthDate: DateTime.now(),
+          heightCm: 00,
+          weightKg: 00,
+          goal: '',
+          trainingDays: null,
+          weeklyTrainingHours: null,
+        );
 
     final updated = baseProfile.copyWith(
       firstName: _firstCtrl.text.trim(),
@@ -126,8 +136,8 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       final p = state.profile!;
       _firstCtrl.text = p.firstName;
       _lastCtrl.text = p.lastName;
-      _heightCtrl.text = p.heightCm?.toString() ?? '';
-      _weightCtrl.text = p.weightKg?.toString() ?? '';
+      _heightCtrl.text = p.heightCm.toString();
+      _weightCtrl.text = p.weightKg.toString();
       _goalCtrl.text = p.goal;
       _birth = p.birthDate;
       _initializedFromProfile = true;

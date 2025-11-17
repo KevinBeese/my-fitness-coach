@@ -4,7 +4,8 @@ import 'package:my_fitness_coach/scr/presentation/screens/auth/auth_screen.dart'
 import 'package:my_fitness_coach/scr/presentation/screens/auth/email_verification_screen.dart';
 import 'package:my_fitness_coach/scr/presentation/screens/home/home_screen.dart';
 import 'package:my_fitness_coach/scr/presentation/screens/profile/profile_gate.dart';
-import 'package:my_fitness_coach/scr/presentation/screens/profile/profile_setup_screen.dart';
+import 'package:my_fitness_coach/scr/presentation/screens/profile/profile_onboarding_screen.dart';
+import 'package:my_fitness_coach/scr/presentation/screens/profile/training/training_preferences_screen.dart';
 
 class AppRoute {
   final String path;
@@ -17,6 +18,7 @@ class AppRoute {
   static const home = AppRoute(AppRoutes.home);
   static const profileGate = AppRoute(AppRoutes.profileGate);
   static const verifyEmail = AppRoute(AppRoutes.verifyEmail);
+  static const trainingPreferencesScreen = AppRoute(AppRoutes.trainingPreferencesScreen);
 }
 
 abstract class AppRoutes {
@@ -26,12 +28,13 @@ abstract class AppRoutes {
   static const home = '/home';
   static const profileGate = '/profile-gate';
   static const verifyEmail = '/verify-email';
+  static const trainingPreferencesScreen = '/training-preferences';
 }
 
 final appRoutes = {
   AppRoutes.root: (_) => const AuthGate(),
   AppRoutes.login: (_) => const AuthScreen(),
-  AppRoutes.onboarding: (_) => const ProfileSetupScreen(),
+  AppRoutes.onboarding: (_) => const ProfileOnboardingScreen(),
   AppRoutes.home: (_) => const HomeScreen(),
   AppRoutes.profileGate: (_) => const ProfileGate(),
   AppRoutes.verifyEmail: (ctx) {
@@ -40,4 +43,5 @@ final appRoutes = {
     final password = args?['password'] ?? '';
     return EmailVerificationScreen(email: email, password: password);
   },
+  AppRoutes.trainingPreferencesScreen: (_) => const TrainingPreferencesScreen(),
 };

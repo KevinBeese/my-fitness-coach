@@ -1,51 +1,49 @@
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/profile/profile_entity.dart';
 
+const String API_TABLE_NAME_PROFILES = 'profiles';
+const String API_ID_FIELD = 'id';
+
+final profileApiProvider = Provider<ProfileApi>((ref) {
+  final client = Supabase.instance.client;
+  return ProfileApi(client);
+});
+
 class ProfileApi {
-  final SupabaseClient client;
+  final SupabaseClient supabaseClient;
 
-  ProfileApi(this.client);
+  ProfileApi(this.supabaseClient);
 
-  Future<Profile?> fetchProfileForUser(String userId) async {
-    final res = await client.from('profiles').select().eq('id', userId).maybeSingle();
-
-    if (res == null) return null;
-
-    return Profile(
-      id: res['id'] as String,
-      firstName: (res['first_name'] ?? '') as String,
-      lastName: (res['last_name'] ?? '') as String,
-      birthDate: (res['birth_date'] as String?) != null ? DateTime.tryParse(res['birth_date'] as String) : null,
-      heightCm: (res['height_cm'] as num?)?.toDouble(),
-      weightKg: (res['weight_kg'] as num?)?.toDouble(),
-      goal: (res['goal'] ?? '') as String,
-    );
+  Future<Profile?> fetchProfileForUser() async {
+    final userId = supabaseClient.auth.currentUser?.id;
+    if (userId == null) return null;
+    final response = await supabaseClient.from(API_TABLE_NAME_PROFILES).select().eq(API_ID_FIELD, userId).maybeSingle();
+    if (response == null) return null;
+    return Profile.fromMap(response);
   }
 
   Future<Profile> upsertProfile(Profile profile) async {
-    final res = await client
-        .from('profiles')
-        .upsert({
-          'id': profile.id,
-          'first_name': profile.firstName,
-          'last_name': profile.lastName,
-          'birth_date': profile.birthDate?.toIso8601String(),
-          'height_cm': profile.heightCm,
-          'weight_kg': profile.weightKg,
-          'goal': profile.goal,
+    final response = await supabaseClient.from(API_TABLE_NAME_PROFILES).upsert(profile.toMap()).select().single();
+    return Profile.fromMap(response);
+  }
+
+  Future<Profile> updateTrainingPreferences({
+    required String profileId,
+    required List<String> trainingDays,
+    required int weeklyTrainingMinutes,
+  }) async {
+    final response = await supabaseClient
+        .from(API_TABLE_NAME_PROFILES)
+        .update({
+          STRING_PROFILE_API_TRAINING_DAY: trainingDays,
+          STRING_PROFILE_API_WEEKLY_TRAINING_HOURS: weeklyTrainingMinutes,
         })
+        .eq(API_ID_FIELD, profileId)
         .select()
         .single();
 
-    return Profile(
-      id: res['id'] as String,
-      firstName: (res['first_name'] ?? '') as String,
-      lastName: (res['last_name'] ?? '') as String,
-      birthDate: (res['birth_date'] as String?) != null ? DateTime.tryParse(res['birth_date'] as String) : null,
-      heightCm: (res['height_cm'] as num?)?.toDouble(),
-      weightKg: (res['weight_kg'] as num?)?.toDouble(),
-      goal: (res['goal'] ?? '') as String,
-    );
+    return Profile.fromMap(response);
   }
 }

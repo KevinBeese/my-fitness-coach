@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:my_fitness_coach/scr/presentation/app/routes/app_routes.dart';
 import 'package:my_fitness_coach/scr/presentation/state/auth/auth_provider.dart';
 import 'package:my_fitness_coach/scr/presentation/state/auth/auth_state.dart';
+import 'package:my_fitness_coach/scr/presentation/theme/style/styles.dart';
 
 class HomeScreen extends HookConsumerWidget {
   const HomeScreen({super.key});
@@ -19,15 +20,32 @@ class HomeScreen extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
-        actions: [IconButton(onPressed: () => authNotifier.signOut(), icon: Icon(Icons.logout))],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.fitness_center),
+            onPressed: () {
+              Navigator.of(context).pushNamed(AppRoutes.trainingPreferencesScreen);
+            },
+          ),
+
+          IconButton(onPressed: () => authNotifier.signOut(), icon: Icon(Icons.logout)),
+        ],
       ),
       body: Column(
         children: [
           Center(child: Text('Home Screen – Training, Stats, etc.')),
+          verticalMargin16,
           ElevatedButton(
             onPressed: () => Navigator.of(context).pushNamed(AppRoutes.onboarding),
             child: Text('User Profile'),
           ),
+
+          verticalMargin16,
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pushNamed(AppRoutes.trainingPreferencesScreen),
+            child: Text('Training Preferences'),
+          ),
+          verticalMargin16,
         ],
       ),
     );
